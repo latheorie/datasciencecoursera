@@ -1,0 +1,71 @@
+---
+"Reproducible research assignment 1"
+
+---
+"Loading the data:"
+```{r}
+
+temp <- tempfile()
+download.file("http://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip",temp)
+data <- read.csv(unz(temp, "activity.csv"), header=TRUE)
+unlink(temp)
+
+```
+
+"The histogram is: "
+
+```{r, fig.height=4}
+
+dataclean=data[which(data[,1] != "NA"),] 
+date=as.Date(dataclean[,2])
+d=dataclean
+agg<-aggregate(.~d$date,dataclean,sum)
+agg[,1]<-as.Date(agg[,1], '%Y-%m-%d')
+ hist(agg$steps, 
+main = "Number of steps per day", xlab="aggregate number of steps", 
+ylab="days with corresponding aggregate number of steps")
+
+```
+
+
+```{r}
+meanperday <- mean(agg$steps)
+di<-median(agg$steps)
+
+```
+
+"The mean is "
+```{r}
+meanperday
+```
+
+"The median is"
+```{r}
+
+di
+
+```
+
+"The plot for the average number of steps during a 5 min interval is:   "
+```{r, fig.height=4}
+agg2<-aggregate(.~d$interval,dataclean,mean)
+ plot(agg2[,4], agg2$steps, type="l",
+main = "average number of steps during 5 min intervals", xlab="Time interval", ylab="Average number of steps" ) 
+```
+
+
+"The minute inteval with the highest number of steps is:"
+```{r}
+max = as.character(agg2[which.max( agg2$steps),4])
+print(max)
+```
+
+
+"The number of NA is: " 
+```{r}
+isna <- is.na(data$steps)
+countna <- sum(isna)
+print(countna)
+```
+
+
